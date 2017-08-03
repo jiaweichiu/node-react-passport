@@ -4,6 +4,7 @@ We want a minimal example to demonstrate the use of the following:
 * Node
 * Passport-local
 * Postgres
+* Tape, Supertest
 
 We use Postgres here though it should be easy to do a MongoDB version.
 
@@ -106,18 +107,20 @@ npm install --save \
 passport passport-local \
 crypto underscore \
 continuation-local-storage \
+express-session \
 pg
 ```
 
 ## Tape
 
-We use Tape for unit testing. It is simpler than `mocha` but has some quirks. For example, the test might not end because the server is running. That explains why we have `test.onFinish(() => process.exit());` at the start of each test.
+We use Tape and Supertest for unit test. It is simpler than `mocha` but has some quirks. For example, the test might not end because the server is running. That explains why we have `test.onFinish(() => process.exit());` at the start of each
+test.
 
 To install:
 
 ```shell
 sudo npm install tape -g
-npm install tape --save-dev
+npm install tape supertest --save-dev
 ```
 
 Add the following to `package.json`:

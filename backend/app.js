@@ -6,9 +6,12 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
-var users = require('./routes/users');
+// var users = require('./routes/users');
 
+/////////////////// Our additions
 const pool = require('./models/pool');
+const cUser = require('./controllers/user');
+/////////////////// End of our additions
 
 var app = express();
 
@@ -26,10 +29,20 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 /////////////////// Our additions
 pool.init(app);
+cUser.init(app);
+// Allow access from :3001 which is where our frontend is.
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'http://localhost:3001');
+  res.header('Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, X-AUTHENTICATION, X-IP, Content-Type, Accept');
+  res.header('Access-Control-Allow-Credentials', true);
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  next();
+});
 /////////////////// End of our additions
 
 app.use('/', index);
-app.use('/users', users);
+// app.use('/users', users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 const _ = require('underscore')._;
+
 const pool = require('./pool');
 
 // passwordHash hashes <password, salt> and sends the result to "done".
