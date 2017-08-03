@@ -41,6 +41,7 @@ function init(app) {
   passport.use(passportStrategy);
 
   passport.serializeUser((user, done) => {
+    console.log("~~~serializeUser");
     // Serialize more than just the ID so that we have more info in session to
     // work with.
     done(null, _.pick(user, ['id', 'username']));
@@ -50,6 +51,7 @@ function init(app) {
   // https://stackoverflow.com/questions/26109556/req-session-passport-is-empty-deserializeuser-not-called-expressjs-passport
   // done is function(err, user).
   passport.deserializeUser((user, done) => {
+    console.log("~~~deserializeUser: " + JSON.stringify(user));
     mUser.getByID(user.id, (err, user) => {
       if (err) {
         // Invalid user session. Ask passport to logout.
@@ -75,7 +77,7 @@ function ensureAuthenticated(req, res, next) {
 }
 
 function get(req, res) {
-  auth.ensureAuthenticated(req, res, (req, res) => {
+  ensureAuthenticated(req, res, (req, res) => {
     var f;
     var value;
     if (_.has(req.body, 'id')) {
@@ -144,6 +146,38 @@ function create(req, res) {
   });
 }
 
+// remove user. Must be authenticated.
+function remove(req, res) {
+  ensureAuthenticated(req, res, (req, res) => {
+    if (!_.has(req.body, 'userID')) {
+      return res.json({
+        success: false,
+        err: 'Require userID',
+      });
+    }
+    const userID = req.body.userID;
+    // Please use integers not strings in the JSON body.
+    if (req.session.passport.user.id !== userID) {
+      return res.json({
+        success: false,
+        err: 'You can only delete yourself',
+      });
+    }
+    mUser.remove(userID, (err, userID) => {
+      if (err) {
+        return res.json({
+          success: false,
+          err: err,
+        });
+      }
+      res.json({
+        success: true,
+        userID: userID,
+      });
+    });
+  });
+}
+
 function login(req, res, next) {
   passport.authenticate('local', {session: true}, (err, user) => {
     if (err) {
@@ -173,4 +207,5 @@ module.exports = {
   get,
   login,
   create,
+  remove,
 };

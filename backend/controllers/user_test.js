@@ -52,7 +52,20 @@ test('userCreateLoginDelete', (t) => {
             t.assert(_.has(res, 'body'));
             t.assert(_.has(res.body, 'success'));
             t.true(res.body.success);
-            t.end();
+
+            // Remove user.
+            request(app)
+            .post('/user/remove')
+            .send({userID: userID})
+            .expect(200)
+            .end((err, res) => {
+              console.log('~~~~~~~~~~~~~~~~~~~');
+              console.log(res.body);
+              t.assert(_.has(res, 'body'));
+              t.assert(_.has(res.body, 'success'));
+              t.true(res.body.success);
+              t.end();
+            });
           });
         });
     });

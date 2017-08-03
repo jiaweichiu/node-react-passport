@@ -4,8 +4,11 @@ var router = express.Router();
 const cUser = require("../controllers/user");
 
 /////////////////// Our additions
-router.post("/login", cUser.login);
-router.post("/user/create", cUser.create);
+// TODO: Make this RESTful.
+router.post('/user/login', cUser.login);
+router.post('/user/get', cUser.get);
+router.post('/user/create', cUser.create);
+router.post('/user/remove', cUser.remove);
 /////////////////// End of our additions
 
 /* GET home page. */

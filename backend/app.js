@@ -1,3 +1,8 @@
+/////////////////// Our additions
+const createNamespace = require("continuation-local-storage").createNamespace;
+const expressNamespace = createNamespace("express");
+/////////////////// End of our additions
+
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -28,6 +33,16 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 /////////////////// Our additions
+// Store req and res for easy reference. We can now logout anywhere.
+app.use((req, res, next) => {
+  expressNamespace.bindEmitter(req);
+  expressNamespace.bindEmitter(res);
+  expressNamespace.run(() => {
+    expressNamespace.set("req", req);
+    expressNamespace.set("res", res);
+    next();
+  });
+});
 pool.init(app);
 cUser.init(app);
 // Allow access from :3001 which is where our frontend is.
