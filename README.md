@@ -10,6 +10,7 @@ We use Postgres here though it should be easy to do a MongoDB version.
 # Postgres database setup
 
 Some usual `psql` commands:
+* `\du` to list all users
 * `\l` to list all databases
 * `\dt` to list all tables in current database
 
@@ -40,6 +41,30 @@ CREATE TABLE table_users(
   hash VARCHAR(1000) NOT NULL CHECK (char_length(hash)>=4));
 ```
 
+Set a password for this database by modifying `/etc/postgresql/9.5/main/pg_hba.conf`. For example, add the following line to the end:
+
+```
+host db0000 jchiu 127.0.0.1/32 password
+```
+
+Then set the password.
+
+```
+psql db0000
+
+ALTER ROLE jchiu UNENCRYPTED PASSWORD 'somepassword';
+```
+
+Try logging in:
+
+```
+psql -h localhost -d db0000
+```
+
+You will be prompted for a password. Try different possibilities to make sure it works.
+
+This information should be consistent with what is specified in `models/pool.js`.
+
 # Model
 
 When a user is created, or when a password is updated, we create a new [salt](https://en.wikipedia.org/wiki/Salt_(cryptography)) for the user, which is really just some random bits.
@@ -68,3 +93,22 @@ npm install
 In `package.json`, under `scripts.start`, change it from `node ./bin/www` to `supervisor ./bin/www`.
 
 Try the app and see that it works by typing `npm start`. By default, for Express, the site would be available at `http://localhost:3000`.
+
+Next, install all the packages we need.
+
+```shell
+npm install --save \
+passport passport-local \
+crypto underscore \
+continuation-local-storage \
+pg
+```
+
+We use Tape for unit testing.
+
+```shell
+sudo npm install tape -g
+npm install tape --save-dev
+```
+
+Add `"test": "tape **/*_test.js"` to `package.json`.
