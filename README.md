@@ -104,11 +104,19 @@ continuation-local-storage \
 pg
 ```
 
-We use Tape for unit testing.
+## Tape
+
+We use Tape for unit testing. It is simpler than `mocha` but has some quirks. For example, the test might not end because the server is running. That explains why we have `test.onFinish(() => process.exit());` at the start of each test.
+
+To install:
 
 ```shell
 sudo npm install tape -g
 npm install tape --save-dev
 ```
 
-Add `"test": "tape **/*_test.js"` to `package.json`.
+Add the following to `package.json`:
+
+```
+"test": "tape **/*_test.js"
+```
