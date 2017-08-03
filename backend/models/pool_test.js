@@ -10,7 +10,7 @@ test('pool', function(t) {
 });
 
 test('query', function(t) {
-  pool.query('SELECT * FROM table_users', [], (err, res) => {
+  pool.query('SELECT * FROM table_users LIMIT 1', [], (err, res) => {
     t.error(err);
     t.end();
   });
