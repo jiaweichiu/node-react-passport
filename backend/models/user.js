@@ -2,14 +2,14 @@ const crypto = require('crypto');
 const _ = require('underscore')._;
 const pool = require('./pool');
 
-// passwordHash hashes <password, salt> and sends the result to cb.
+// passwordHash hashes <password, salt> and sends the result to "done".
 // The result sent is a base64 string.
-function passwordHash(password, salt, cb) {
+function passwordHash(password, salt, done) {
   return crypto.pbkdf2(password, salt, 12427, 512, 'sha512', (err, hash) => {
     if (err) {
-      return cb(err, hash);
+      return done(err, hash);
     }
-    return cb(err, hash.toString('base64'));
+    return done(err, hash.toString('base64'));
   });
 }
 
@@ -18,26 +18,26 @@ function passwordSalt() {
 }
 
 // create creates a user.
-function create(user, cb) {
+function create(user, done) {
   if (!_.has(user, 'username') ||
       !_.has(user, 'hash') ||
       !_.has(user, 'salt')) {
-    return cb('Missing field', null);
+    return done('Missing field', null);
   }
   const q = `INSERT INTO table_users(username,hash,salt)
     values($1, $2, $3) RETURNING id`;
   const params = [user.username, user.hash, user.salt];
   pool.query(q, params, (err, res) => {
     if (err) {
-      return cb(err, null);
+      return done(err, null);
     }
     if (!res || !_.has(res, 'rowCount')) {
-      return cb('Missing result', null);
+      return done('Missing result', null);
     }
     if (res.rowCount !== 1) {
-      return cb('Bad row count: ' + res.rowCount, null);
+      return done('Bad row count: ' + res.rowCount, null);
     }
-    cb(null, {
+    done(null, {
       id: res.rows[0].id,  // Return the ID for new user.
       username: user.username,
     });
@@ -58,6 +58,41 @@ function remove(userID, done) {
       return done('Bad row count: ' + res.rowCount, null);
     }
     done(null, userID);
+  });
+}
+
+// update updates the user's fields.
+function update(user, done) {
+  if (!_.has(user, 'id')) {
+    return done('Require user id', null);
+  }
+  var q = 'UPDATE table_users SET ';
+  var params = [];
+  _.each(['username', 'hash', 'salt'], (c) => {
+    if (_.has(user, c)) {
+      if (!_.isEmpty(params)) {
+        q += ',';
+      }
+      q += c + '=$' + (params.length + 1).toString();
+      params.push(user[c]);
+    }
+  });
+
+  if (_.isEmpty(params)) {
+    return done('No fields being changed', null);
+  }
+  q += ' WHERE id=' + user.id;
+  pool.query(q, params, (err, res) => {
+    if (err) {
+      return done(err, null);
+    }
+    if (!res || !_.has(res, 'rowCount')) {
+      return done('Missing result', null);
+    }
+    if (res.rowCount !== 1) {
+      return done('Bad row count: ' + res.rowCount, null);
+    }
+    done(null, user);
   });
 }
 
@@ -85,7 +120,7 @@ function getByID(userID, done) {
 }
 
 function getByUsername(username, done) {
-  return getOne('username', uesrname, done);
+  return getOne('username', username, done);
 }
 
 module.exports = {
@@ -95,4 +130,5 @@ module.exports = {
   getByUsername,
   create,
   remove,
+  update,
 };

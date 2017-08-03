@@ -62,7 +62,7 @@ When a user is created, or when a password is updated, we create a new [salt](ht
 
 `hash` is computed from hashing `salt+password`. The latter is string concatenation.
 
-Create our table. We add just the fields we need for this example. Some simple constraints are added.
+Create our table. We add just the fields we need for this example. Some simple constraints are added, e.g., uniqueness of `username`. We also add an index for `username`.
 
 ```
 psql db0000
@@ -71,6 +71,10 @@ CREATE TABLE table_users(
   salt VARCHAR(255) NOT NULL CHECK (char_length(username)>=4),
   username VARCHAR(255) UNIQUE NOT NULL CHECK (char_length(username)>=4),
   hash VARCHAR(1000) NOT NULL CHECK (char_length(hash)>=4));
+
+CREATE INDEX index_users_username_ ON table_users(username);
+
+\d table_users
 ```
 
 # Node setup
@@ -121,3 +125,5 @@ Add the following to `package.json`:
 ```
 "test": "tape **/*_test.js"
 ```
+
+One simple test is `models/pool_test.js`. It will test that we can connect to the database and that the table is created.
