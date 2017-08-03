@@ -30,18 +30,9 @@ psql template1
 CREATE DATABASE db0000 WITH OWNER=jchiu;
 ```
 
-Exit and login to the new database. Create our table. We add just the fields we need for this example. Some simple constraints are added.
+Exit and login to the new database by typing `psql db0000`.
 
-```
-psql db0000
-CREATE TABLE table_users(
-  id SERIAL PRIMARY KEY,
-  salt VARCHAR(255) NOT NULL CHECK (char_length(username)>=4),
-  username VARCHAR(255) UNIQUE NOT NULL CHECK (char_length(username)>=4),
-  hash VARCHAR(1000) NOT NULL CHECK (char_length(hash)>=4));
-```
-
-Set a password for this database by modifying `/etc/postgresql/9.5/main/pg_hba.conf`. For example, add the following line to the end:
+Next, set a password for this database by modifying `/etc/postgresql/9.5/main/pg_hba.conf`. For example, add the following line to the end:
 
 ```
 host db0000 jchiu 127.0.0.1/32 password
@@ -71,6 +62,16 @@ When a user is created, or when a password is updated, we create a new [salt](ht
 
 `hash` is computed from hashing `salt+password`. The latter is string concatenation.
 
+Create our table. We add just the fields we need for this example. Some simple constraints are added.
+
+```
+psql db0000
+CREATE TABLE table_users(
+  id SERIAL PRIMARY KEY,
+  salt VARCHAR(255) NOT NULL CHECK (char_length(username)>=4),
+  username VARCHAR(255) UNIQUE NOT NULL CHECK (char_length(username)>=4),
+  hash VARCHAR(1000) NOT NULL CHECK (char_length(hash)>=4));
+```
 
 # Node setup
 
