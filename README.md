@@ -8,7 +8,9 @@ We want a minimal example to demonstrate the use of the following:
 
 We use Postgres here though it should be easy to do a MongoDB version.
 
-# Postgres database setup
+# Postgres
+
+## Install
 
 Some usual `psql` commands:
 * `\du` to list all users
@@ -57,7 +59,7 @@ You will be prompted for a password. Try different possibilities to make sure it
 
 This information should be consistent with what is specified in `models/pool.js`.
 
-# Model
+## Model
 
 When a user is created, or when a password is updated, we create a new [salt](https://en.wikipedia.org/wiki/Salt_(cryptography)) for the user, which is really just some random bits.
 
@@ -78,7 +80,9 @@ CREATE INDEX index_users_username_ ON table_users(username);
 \d table_users
 ```
 
-# Node setup
+# Node backend
+
+## Install
 
 We assume you have installed Node and npm.
 
@@ -130,3 +134,26 @@ Add the following to `package.json`:
 ```
 
 One simple test is `models/pool_test.js`. It will test that we can connect to the database and that the table is created.
+
+# React
+
+## Install
+
+In case you don't have this utility installed:
+
+```shell
+sudo npm install -g create-react-app
+```
+
+Create app
+```shell
+create-react-app frontend
+cd frontend
+PORT=3001 npm start
+```
+
+Stick in `PORT=3001` so that we start frontend on `:3001`. We assume backend is
+on `:3000` instead.
+
+If you are using Sublime, you can use https://github.com/babel/babel-sublime to
+improve the syntax highlighting. Install package and set syntax to Babel.
