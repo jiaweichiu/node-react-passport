@@ -29,7 +29,7 @@ test('userCreateLoginDelete', (t) => {
       
       // Try bad login.
       request(app)
-        .post('/login')
+        .post('/user/login')
         .send({
           username: username,
           password: 'wrongpassword',
@@ -42,25 +42,25 @@ test('userCreateLoginDelete', (t) => {
 
           // Try good login.
           request(app)
-          .post('/login')
+          .post('/user/login')
           .send({
             username: username,
-            password: 'testpass',
+            password: 'testpass',  // 
           })
           .expect(200)
           .end((err, res) => {
             t.assert(_.has(res, 'body'));
             t.assert(_.has(res.body, 'success'));
             t.true(res.body.success);
+            const cookie = res.headers['set-cookie'];
 
             // Remove user.
             request(app)
             .post('/user/remove')
+            .set('cookie', cookie)  // Important in order to get login session.
             .send({userID: userID})
             .expect(200)
             .end((err, res) => {
-              console.log('~~~~~~~~~~~~~~~~~~~');
-              console.log(res.body);
               t.assert(_.has(res, 'body'));
               t.assert(_.has(res.body, 'success'));
               t.true(res.body.success);
