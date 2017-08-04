@@ -37,7 +37,7 @@ function init(app) {
       idleTimeoutMillis: 30000,
     };
   } else {
-    return;  // Leaves pool as null.
+    return; // Leaves pool as null.
   }
   pool = new pg.Pool(config);
   pool.on('error', (err, client) => {

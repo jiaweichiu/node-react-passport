@@ -41,7 +41,7 @@ test('userQuery', (t) => {
       mUser.remove(userID, (err, res) => {
         t.error(err);
         mUser.getByID(userID, (err, res) => {
-          t.true(err);  // Expect an error.
+          t.true(err); // Expect an error.
           t.false(res);
           t.end();
         });

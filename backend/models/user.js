@@ -21,8 +21,7 @@ function passwordSalt() {
 // create creates a user.
 function create(user, done) {
   if (!_.has(user, 'username') ||
-      !_.has(user, 'hash') ||
-      !_.has(user, 'salt')) {
+    !_.has(user, 'hash') || !_.has(user, 'salt')) {
     return done('Missing field', null);
   }
   const q = `INSERT INTO table_users(username,hash,salt)
@@ -39,7 +38,7 @@ function create(user, done) {
       return done('Bad row count: ' + res.rowCount, null);
     }
     done(null, {
-      id: res.rows[0].id,  // Return the ID for new user.
+      id: res.rows[0].id, // Return the ID for new user.
       username: user.username,
     });
   });

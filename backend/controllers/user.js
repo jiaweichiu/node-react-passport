@@ -121,11 +121,10 @@ function create(req, res) {
         err: err
       });
     }
-    const user = _.extend(req.body,
-      {
-        hash: hash,
-        salt: salt,
-      });
+    const user = _.extend(req.body, {
+      hash: hash,
+      salt: salt,
+    });
     mUser.create(user, (err, user) => {
       if (err) {
         return res.json({
@@ -229,7 +228,9 @@ function update(req, res) {
 }
 
 function login(req, res, next) {
-  passport.authenticate('local', {session: true}, (err, user) => {
+  passport.authenticate('local', {
+    session: true
+  }, (err, user) => {
     if (err) {
       return res.json({
         success: false,
