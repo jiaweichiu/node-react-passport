@@ -149,13 +149,13 @@ function create(req, res) {
 // remove user. Must be authenticated.
 function remove(req, res) {
   ensureAuthenticated(req, res, (req, res) => {
-    if (!_.has(req.body, 'userID')) {
+    if (!_.has(req.body, 'id')) {
       return res.json({
         success: false,
-        err: 'Require userID',
+        err: 'Require id (userID)',
       });
     }
-    const userID = req.body.userID;
+    const userID = req.body.id;
     // Please use integers not strings in the JSON body.
     if (req.session.passport.user.id !== userID) {
       return res.json({
@@ -172,7 +172,7 @@ function remove(req, res) {
       }
       res.json({
         success: true,
-        userID: userID,
+        id: userID,
       });
     });
   });
