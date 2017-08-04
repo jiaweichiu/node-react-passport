@@ -41,7 +41,6 @@ function init(app) {
   passport.use(passportStrategy);
 
   passport.serializeUser((user, done) => {
-    console.log("~~~serializeUser");
     // Serialize more than just the ID so that we have more info in session to
     // work with.
     done(null, _.pick(user, ['id', 'username']));
@@ -51,7 +50,6 @@ function init(app) {
   // https://stackoverflow.com/questions/26109556/req-session-passport-is-empty-deserializeuser-not-called-expressjs-passport
   // done is function(err, user).
   passport.deserializeUser((user, done) => {
-    console.log("~~~deserializeUser: " + JSON.stringify(user));
     mUser.getByID(user.id, (err, user) => {
       if (err) {
         // Invalid user session. Ask passport to logout.
@@ -152,7 +150,7 @@ function remove(req, res) {
     if (!_.has(req.body, 'id')) {
       return res.json({
         success: false,
-        err: 'Require id (userID)',
+        err: 'Require userID',
       });
     }
     const userID = req.body.id;
@@ -175,6 +173,58 @@ function remove(req, res) {
         id: userID,
       });
     });
+  });
+}
+
+function update(req, res) {
+  ensureAuthenticated(req, res, (req, res) => {
+    if (!_.has(req.body, 'id')) {
+      return res.json({
+        success: false,
+        err: 'Require userID',
+      });
+    }
+    if (req.session.passport.user.id !== req.body.id) {
+      return res.json({
+        success: false,
+        err: 'You can only modify yourself',
+      });
+    }
+
+    const user = _.pick(req.body, ['id', 'password', 'username']);
+    if (_.has(user, 'password')) {
+      // TODO: Add some checks for password.
+      const salt = mUser.passwordSalt();
+      mUser.passwordHash(user.password, salt, (err, hash) => {
+        if (err) {
+          return res.json({
+            success: false,
+            err: err
+          });
+        }
+        user.hash = hash;
+        user.salt = salt;
+        delete user['password'];
+        runUpdate(user);
+      });
+    } else {
+      runUpdate(user);
+    }
+
+    function runUpdate(user) {
+      mUser.update(user, (err, user) => {
+        if (err) {
+          return res.json({
+            success: false,
+            err: err,
+          });
+        }
+        res.json({
+          success: true,
+          user: user,
+        });
+      });
+    }
   });
 }
 
@@ -208,4 +258,5 @@ module.exports = {
   login,
   create,
   remove,
+  update,
 };

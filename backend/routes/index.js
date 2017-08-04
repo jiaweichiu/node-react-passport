@@ -9,6 +9,7 @@ router.post('/user/login', cUser.login);
 router.post('/user/get', cUser.get);
 router.post('/user/create', cUser.create);
 router.post('/user/remove', cUser.remove);
+router.post('/user/update', cUser.update);
 /////////////////// End of our additions
 
 /* GET home page. */
