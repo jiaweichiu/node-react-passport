@@ -227,6 +227,19 @@ function update(req, res) {
   });
 }
 
+function checkauth(req, res) {
+  if (!req.isAuthenticated()) {
+    return res.json({
+      success: false,
+      err: "Not authenticated",
+    });
+  }
+  return res.json({
+    success: true,
+    user: req.session.passport.user,
+  });
+}
+
 function login(req, res, next) {
   passport.authenticate('local', {
     session: true
@@ -253,10 +266,19 @@ function login(req, res, next) {
   })(req, res, next);
 }
 
+function logout(req, res) {
+  req.logout();
+  res.json({
+    success: true,
+  });
+}
+
 module.exports = {
   init,
   get,
   login,
+  logout,
+  checkauth,
   create,
   remove,
   update,

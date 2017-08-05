@@ -6,6 +6,8 @@ const cUser = require("../controllers/user");
 /////////////////// Our additions
 // TODO: Make this RESTful.
 router.post('/user/login', cUser.login);
+router.post("/user/logout", cUser.logout);
+router.post('/user/checkauth', cUser.checkauth);
 router.post('/user/get', cUser.get);
 router.post('/user/create', cUser.create);
 router.post('/user/remove', cUser.remove);

@@ -157,3 +157,16 @@ on `:3000` instead.
 
 If you are using Sublime, you can use https://github.com/babel/babel-sublime to
 improve the syntax highlighting. Install package and set syntax to Babel.
+
+Install some modules.
+
+```shell
+npm install --save \
+axios \
+bootstrap@3 \
+react-toastr
+```
+
+For Bootstrap, remember to update `index.js`. We need to import some CSS.
+
+For Toast, we need to copy two CSS files `toastr.min.css` and `animate.min.css` and import them in `index.js`.
