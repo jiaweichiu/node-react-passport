@@ -164,7 +164,8 @@ Install some modules.
 npm install --save \
 axios \
 bootstrap@3 \
-react-toastr
+react-toastr \
+react-confirm-alert
 ```
 
 For Bootstrap, remember to update `index.js`. We need to import some CSS.

@@ -21,7 +21,7 @@ export default class SignupView extends Component {
 
   handleChange(event) {
     const target = event.target;
-    const value = target.value;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
     this.setState({
       [name]: value
@@ -29,7 +29,7 @@ export default class SignupView extends Component {
   }
 
   handleSubmit(event) {
-    event.preventDefault();
+    event.preventDefault();  // IMPORTANT.
     if (!this.state.password || this.state.password.length < 6) {
       return this.props.toast.error('Password too short.');
     }
@@ -41,6 +41,7 @@ export default class SignupView extends Component {
       password: this.state.password,
     }).then((rsp) => {
       if (!rsp.data.success) {
+        console.log(rsp.data);
         return this.props.toast.error('Failed to create user.');
       }
       this.props.toast.success('Created new user!');

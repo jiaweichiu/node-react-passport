@@ -7,7 +7,7 @@ export default class LoginView extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      username: 'admin0',
+      username: 'user101',
       password: 'password',
     };
     this.handleChange = this.handleChange.bind(this);
@@ -25,7 +25,7 @@ export default class LoginView extends Component {
   }
 
   handleLogin(event) {
-    event.preventDefault();
+    event.preventDefault();  // IMPORTANT.
     axios.post(config.SERVER_URL + '/user/login', {
       username: this.state.username,
       password: this.state.password,

@@ -8,6 +8,7 @@ import * as config from './config';
 // Our components.
 import SignupView from "./components/SignupView";
 import LoginView from "./components/LoginView";
+import UserEditView from "./components/UserEditView";
 
 var ReactToastr = require('react-toastr');
 var {ToastContainer} = ReactToastr; // This is a React Element. 
@@ -24,7 +25,7 @@ class App extends Component {
       mainView: null,
     };
 
-    // Check auth. This is to "remember me".
+    // Check auth. This is for Remember Me.
     axios.post(config.SERVER_URL + '/user/checkauth').then((rsp) => {
       if (!rsp.data.success) {
         return;
@@ -34,6 +35,7 @@ class App extends Component {
 
     // Show functions. For navigation and setting state.mainView.
     this.showSignup = this.showSignup.bind(this);
+    this.showUserEdit = this.showUserEdit.bind(this);
 
     // Handlers for child components.
     this.handleLogin = this.handleLogin.bind(this);
@@ -48,21 +50,23 @@ class App extends Component {
     };
   }
 
-  // For UserView
+  // Handler for LoginView.
   handleLogin(rsp) {
     if (!rsp.data.success) {
-      return this.toastError('Login failed');
+      return this.toast.error('Login failed');
     }
-    this.toastSuccess('Login as ' + rsp.data.user.username + ' ok!');
+    this.toast.success('Login as ' + rsp.data.user.username + ' ok!');
     this.setState({
       user: rsp.data.user,
       mainView: null,
     });
   }
 
+  // Handler for LoginView.
   handleLogout(rsp) {
     if (!rsp.data.success) {
-      return this.toastError('Logout failed');
+      console.log(rsp.data);
+      return this.toast.error('Logout failed');
     }
     this.setState({
       user: null,
@@ -77,7 +81,6 @@ class App extends Component {
         extendedTimeOut: 5000
       });
   }
-
   toastError(s) {
     this.refs.container.error(s, 'Error',
       {
@@ -86,10 +89,22 @@ class App extends Component {
       });
   }
 
+  // Navigation.
   showSignup() {
-    console.log('showSignup');
     this.setState({
       mainView: (<SignupView toast={this.toast} />),
+    });
+  }
+
+  showUserEdit() {
+    if (!this.state.user) {
+      return this.toast.error('Not logged in');
+    }
+    this.setState({
+      mainView: (<UserEditView
+        toast={this.toast}
+        user_id={this.state.user.id}
+      />),
     });
   }
 
@@ -106,7 +121,7 @@ class App extends Component {
             </button>
             <button type="button" name="user_edit"
               className="btn btn-default navbar-btn"
-              onClick={this.props.showUserEdit}>
+              onClick={this.showUserEdit}>
               User edit
             </button>
           </div>

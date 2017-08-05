@@ -6,6 +6,7 @@
     "axios": "^0.16.2",
     "bootstrap": "^3.3.7",
     "react": "^15.6.1",
+    "react-confirm-alert": "^1.0.7",
     "react-dom": "^15.6.1",
     "react-scripts": "1.0.10",
     "react-toastr": "^2.8.2"
